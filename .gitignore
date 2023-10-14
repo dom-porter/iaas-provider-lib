@@ -1,0 +1,10 @@
+/*.csv
+/*.log
+/*.xml
+/.idea
+/.env
+./venv
+*.pem
+*.ini
+*.yml
+*.old
