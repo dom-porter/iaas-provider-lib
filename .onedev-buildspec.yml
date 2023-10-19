@@ -1,0 +1,19 @@
+version: 25
+jobs:
+- name: Push to Github
+  steps:
+  - !PushRepository
+    name: github-push
+    remoteUrl: https://github.com/dom-porter/iaas-provider-lib.git
+    userName: dominic.porter
+    passwordSecret: access-token
+    force: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !BranchUpdateTrigger
+    branches: main
+    paths: -.gitignore
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
