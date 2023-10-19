@@ -4,7 +4,7 @@ from iaas.enums import Providers
 
 """
 As providers will all have different names for the VM states.
-The VM_STATES dict will ensure a consistent naming convention for all VM providers.
+The VM_STATES dict will ensure a consistent naming convention for all VirtualMachine instances.
 
 The two states used will be RUNNING and STOPPED.
 """
