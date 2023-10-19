@@ -25,6 +25,9 @@ By default all configuration for the providers are stored in the ./config direct
 client = client_factory(Providers.NETCUP, "./mypath/netcup.ini")
 ````
 
+# Virtual Machine States
+As providers may have different names for the current state of the VM the library will change them to either RUNNING or STOPPED.
+
 # Examples
 Provided are three examples which will list the virtual machines and check the state. If the VM is not running, it will be started.:</br></br>
 oci-example.py</br>
