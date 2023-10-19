@@ -58,7 +58,7 @@ def main() -> None:
 
         for vm in vm_list:
 
-            if vm.state.upper() == "STOPPED":
+            if vm.state == "STOPPED":
                 print(f"{get_display_mame(vm)} not running. Starting...")
                 logger.error(f"{get_display_mame(vm)} not running. Starting...")
 

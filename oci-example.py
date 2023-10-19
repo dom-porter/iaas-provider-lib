@@ -53,7 +53,7 @@ def main() -> None:
         all_vms = client.get_all_vms()
         for vm in all_vms:
 
-            if vm.state.upper() == "STOPPED":
+            if vm.state == "STOPPED":
                 print(f"{get_display_mame(vm)} not running. Starting...")
                 logger.error(f"{get_display_mame(vm)} not running. Starting...")
 
