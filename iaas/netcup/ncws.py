@@ -256,7 +256,7 @@ async def get_v_server_ips(login: str, password: str, vm_name: str) -> List[str]
 def check_for_error(soap_response: str) -> None:
     """
     Checks if the response from the webservice is an error.
-    If it is then an exception is raised using the exception_factory method.
+    If it is then an exception is raised using the exception_factory function.
 
     :param soap_response: The response returned from the API call.
     :return: None.
