@@ -39,8 +39,8 @@ class NetcupClient:
 
         :return: A list of iaas.vm.VirtualMachine
         """
-        login = self._config.get("DEFAULT", "loginName")
-        password = self._config.get("DEFAULT", "password")
+        login = self._config.get(section="DEFAULT", option="loginName")
+        password = self._config.get(section="DEFAULT", option="password")
         vm_list = []
         try:
             vm_id_list = await ncws.get_v_servers(login, password)
@@ -73,8 +73,8 @@ class NetcupClient:
         :return: The result from the webservice call
         """
         try:
-            result = await ncws.v_server_acpi_shutdown(self._config.get("DEFAULT", "loginName"),
-                                                       self._config.get("DEFAULT", "password"),
+            result = await ncws.v_server_acpi_shutdown(self._config.get(section="DEFAULT", option="loginName"),
+                                                       self._config.get(section="DEFAULT", option="password"),
                                                        vm.vm_id)
             return result
         except ncws_ex.ServiceException as se:
@@ -91,8 +91,8 @@ class NetcupClient:
         :return: The result from the webservice call
         """
         try:
-            result = await ncws.v_server_power_off(self._config.get("DEFAULT", "loginName"),
-                                                   self._config.get("DEFAULT", "password"),
+            result = await ncws.v_server_power_off(self._config.get(section="DEFAULT", option="loginName"),
+                                                   self._config.get(section="DEFAULT", option="password"),
                                                    vm.vm_id)
             return result
         except ncws_ex.ServiceException as se:
@@ -109,8 +109,8 @@ class NetcupClient:
         :return: The result from the webservice call.
         """
         try:
-            result = await ncws.v_server_start(self._config.get("DEFAULT", "loginName"),
-                                               self._config.get("DEFAULT", "password"),
+            result = await ncws.v_server_start(self._config.get(section="DEFAULT", option="loginName"),
+                                               self._config.get(section="DEFAULT", option="password"),
                                                vm.vm_id)
             return result
         except ncws_ex.ServiceException as se:
@@ -127,8 +127,8 @@ class NetcupClient:
         :return: The result from the webservice call.
         """
         try:
-            result = await ncws.v_server_acpi_reboot(self._config.get("DEFAULT", "loginName"),
-                                                     self._config.get("DEFAULT", "password"),
+            result = await ncws.v_server_acpi_reboot(self._config.get(section="DEFAULT", option="loginName"),
+                                                     self._config.get(section="DEFAULT", option="password"),
                                                      vm.vm_id)
             return result
         except ncws_ex.ServiceException as se:
@@ -145,8 +145,8 @@ class NetcupClient:
         :return: A list of IPs.
         """
         try:
-            ip_list = await ncws.get_v_server_ips(self._config.get("DEFAULT", "loginName"),
-                                                  self._config.get("DEFAULT", "password"),
+            ip_list = await ncws.get_v_server_ips(self._config.get(section="DEFAULT", option="loginName"),
+                                                  self._config.get(section="DEFAULT", option="password"),
                                                   vm.vm_id)
             return ip_list
         except ncws_ex.ServiceException as se:
