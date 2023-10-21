@@ -1,7 +1,7 @@
 from typing import Protocol, List, Optional
 
-from clients.netcup import NetcupClient
-from clients.oracle import OracleClient
+from iaas.clients.netcup import NetcupClient
+from iaas.clients.oracle import OracleClient
 from iaas.enums import Providers
 from iaas.vm import VirtualMachine
 
@@ -9,22 +9,22 @@ from iaas.vm import VirtualMachine
 class Client(Protocol):
     """ Used as an interface for all IaaS API clients """
 
-    def get_all_vms(self) -> list[VirtualMachine]:
+    async def get_all_vms(self) -> list[VirtualMachine]:
         ...
 
-    def stop_vm(self, vm: VirtualMachine) -> str:
+    async def stop_vm(self, vm: VirtualMachine) -> str:
         ...
 
-    def force_stop_vm(self, vm: VirtualMachine) -> str:
+    async def force_stop_vm(self, vm: VirtualMachine) -> str:
         ...
 
-    def start_vm(self, vm: VirtualMachine) -> str:
+    async def start_vm(self, vm: VirtualMachine) -> str:
         ...
 
-    def restart_vm(self, vm: VirtualMachine) -> str:
+    async def restart_vm(self, vm: VirtualMachine) -> str:
         ...
 
-    def get_public_ips(self, vm: VirtualMachine) -> List[str]:
+    async def get_public_ips(self, vm: VirtualMachine) -> List[str]:
         ...
 
 

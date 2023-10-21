@@ -42,7 +42,7 @@ def soap_message_factory(end_point: str, variables: dict[str, str]) -> xml.etree
     return envelope
 
 
-def get_v_servers(login: str, password: str) -> List[str]:
+async def get_v_servers(login: str, password: str) -> List[str]:
     """
     Returns a list of virtual machine names.
 
@@ -63,7 +63,7 @@ def get_v_servers(login: str, password: str) -> List[str]:
     return [element.text for element in server_list]
 
 
-def get_v_server_nickname(login: str, password: str, vm_name: str) -> str:
+async def get_v_server_nickname(login: str, password: str, vm_name: str) -> str:
     """
     Returns the nickname of the vm. So far has not worked during testing.
 
@@ -82,14 +82,13 @@ def get_v_server_nickname(login: str, password: str, vm_name: str) -> str:
     check_for_error(response.text)
     root = et.fromstring(response.text)
     nickname = root.find(".//return")
-
     if nickname is not None:
         return nickname.text
     else:
         return ""
 
 
-def get_v_server_state(login: str, password: str, vm_name: str) -> str:
+async def get_v_server_state(login: str, password: str, vm_name: str) -> str:
     """
     Returns the VM state.
 
@@ -114,7 +113,7 @@ def get_v_server_state(login: str, password: str, vm_name: str) -> str:
         return ""
 
 
-def v_server_start(login: str, password: str, vm_name: str) -> str:
+async def v_server_start(login: str, password: str, vm_name: str) -> str:
     """
     Starts the VM.
 
@@ -137,7 +136,7 @@ def v_server_start(login: str, password: str, vm_name: str) -> str:
     return api_response.text
 
 
-def v_server_power_off(login: str, password: str, vm_name: str) -> str:
+async def v_server_power_off(login: str, password: str, vm_name: str) -> str:
     """
     The Server will be shut down. Forced shutdown.
 
@@ -160,7 +159,7 @@ def v_server_power_off(login: str, password: str, vm_name: str) -> str:
     return api_response.text
 
 
-def v_server_acpi_shutdown(login: str, password: str, vm_name: str) -> str:
+async def v_server_acpi_shutdown(login: str, password: str, vm_name: str) -> str:
     """
     Sending an ACPI shutdown signal to operating system.
     If the signal will be accepted, the operating system will be shut down.
@@ -185,7 +184,7 @@ def v_server_acpi_shutdown(login: str, password: str, vm_name: str) -> str:
     return api_response.text
 
 
-def v_server_reset(login: str, password: str, vm_name: str) -> str:
+async def v_server_reset(login: str, password: str, vm_name: str) -> str:
     """
     The Server will be reset from outside. During this process it can lead to data loss.
 
@@ -208,7 +207,7 @@ def v_server_reset(login: str, password: str, vm_name: str) -> str:
     return api_response.text
 
 
-def v_server_acpi_reboot(login: str, password: str, vm_name: str) -> str:
+async def v_server_acpi_reboot(login: str, password: str, vm_name: str) -> str:
     """
     Server is shutdown via ACPI and started after Server powered off.
 
@@ -231,7 +230,7 @@ def v_server_acpi_reboot(login: str, password: str, vm_name: str) -> str:
     return api_response.text
 
 
-def get_v_server_ips(login: str, password: str, vm_name: str) -> List[str]:
+async def get_v_server_ips(login: str, password: str, vm_name: str) -> List[str]:
     """
     Returns a list of IP addresses for the server. This is an assumption as test server only has a single IP.
 

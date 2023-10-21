@@ -6,7 +6,7 @@ from oci.core.models import instance
 from oci.exceptions import InvalidConfig, ConfigFileNotFound, InvalidKeyFilePath, ServiceError
 
 from iaas.enums import Providers
-from iaas.exceptions import ClientException, ProviderError
+from iaas import exceptions as iaas_ex
 from vm import VirtualMachine
 
 
@@ -14,7 +14,7 @@ def set_config_path(path: Optional[str]) -> str:
     """
     Returns the path to the config file. If no path is specified it will use the default path.
 
-    :param path: The full path to an optional config file
+    :param path: (Optional) The full path to a config file
     :return: path: The evaluated path to the config file
     """
     if path:
@@ -56,27 +56,26 @@ class OracleClient:
             oci.config.validate_config(self._config)
             self._compute_client = ComputeClient(self._config)
         except InvalidConfig as v:
-            raise ClientException(f"Config in {self._config_path} is not valid") from None
+            raise iaas_ex.ClientException(f"Config in {self._config_path} is not valid") from None
         except ConfigFileNotFound as c:
-            raise ClientException(f"Unable to locate config file {self._config_path}") from None
+            raise iaas_ex.ClientException(f"Unable to locate config file {self._config_path}") from None
         except InvalidKeyFilePath as k:
-            raise ClientException(f"Unable to locate .pem file specified in {self._config_path}") from None
+            raise iaas_ex.ClientException(f"Unable to locate .pem file specified in {self._config_path}") from None
 
-    def get_all_vms(self) -> list[VirtualMachine]:
+    async def get_all_vms(self) -> list[VirtualMachine]:
         """
         Returns a list of VirtualMachine class instances.
 
         :return: A list of iaas.vm.VirtualMachine
         """
-
         try:
             vm_instances = self._compute_client.list_instances(compartment_id=self._config["tenancy"]).data
             return [oracle_vm_factory(vm) for vm in vm_instances]
         except ServiceError as e:
-            raise ProviderError(
+            raise iaas_ex.ProviderError(
                 f"Oracle API return an error when fetching list of VMs - {e.message}") from None
 
-    def stop_vm(self, vm: VirtualMachine) -> str:
+    async def stop_vm(self, vm: VirtualMachine) -> str:
         """
         Gracefully shuts down the instance by sending a shutdown command to the operating system.
 
@@ -87,7 +86,7 @@ class OracleClient:
         vm_instance = self._compute_client.instance_action(vm.vm_id, action="SOFTSTOP")
         return vm_instance.data.lifecycle_state
 
-    def force_stop_vm(self, vm: VirtualMachine) -> str:
+    async def force_stop_vm(self, vm: VirtualMachine) -> str:
         """
         Power off the VM instance.
 
@@ -98,7 +97,7 @@ class OracleClient:
         vm_instance = self._compute_client.instance_action(vm.vm_id, action="STOP")
         return vm_instance.data.lifecycle_state
 
-    def start_vm(self, vm: VirtualMachine) -> str:
+    async def start_vm(self, vm: VirtualMachine) -> str:
         """
         Starts the supplied VM instance.
 
@@ -109,7 +108,7 @@ class OracleClient:
         vm_instance = self._compute_client.instance_action(vm.vm_id, action="START")
         return vm_instance.data.lifecycle_state
 
-    def restart_vm(self, vm: VirtualMachine) -> str:
+    async def restart_vm(self, vm: VirtualMachine) -> str:
         """
         Restarts the supplied VM instance.
 
@@ -120,7 +119,7 @@ class OracleClient:
         vm_instance = self._compute_client.instance_action(vm.vm_id, action="SOFTRESET")
         return vm_instance.data.lifecycle_state
 
-    def get_public_ips(self, vm: VirtualMachine) -> List[str]:
+    async def get_public_ips(self, vm: VirtualMachine) -> List[str]:
         """
         Returns a list of all public IP addresses assigned to the VM instance.
 

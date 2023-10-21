@@ -1,10 +1,12 @@
+import asyncio
 import logging
 import logging.handlers
 from time import gmtime
 
-from iaas.exceptions import ClientException, ProviderError
-from iaas.client import client_factory, Providers
-from vm import VirtualMachine
+from iaas import client as iaas_client
+from iaas import exceptions as iaas_ex
+
+logger = logging.getLogger("netcup-monitor")
 
 
 def configure_logging() -> None:
@@ -27,7 +29,7 @@ def configure_logging() -> None:
     logging.basicConfig(handlers=[handler], level=logging.INFO)
 
 
-def get_display_mame(vm: VirtualMachine) -> str:
+def get_display_mame(vm: iaas_client.VirtualMachine) -> str:
     """
     Will return the display name if available otherwise it will return the vm_id
 
@@ -40,35 +42,39 @@ def get_display_mame(vm: VirtualMachine) -> str:
         return vm.vm_id
 
 
-def main() -> None:
+async def monitor_vm(vm, client):
+    if vm.state == "STOPPED":
+        print(f"{get_display_mame(vm)} not running. Starting...")
+        logger.error(f"{get_display_mame(vm)} not running. Starting...")
+
+        await client.start_vm(vm)
+    else:
+        print(f"{get_display_mame(vm)} -> {vm.state}")
+        logger.debug(f"{get_display_mame(vm)} -> {vm.state}")
+
+
+async def main() -> None:
     """
     Main function to call
 
     :return: None
     """
-    logger = logging.getLogger("netcup-monitor")
+
     try:
         print("netcup-example")
-        client = client_factory(Providers.NETCUP)
-        vm_list = client.get_all_vms()
-        for vm in vm_list:
+        client = iaas_client.client_factory(iaas_client.Providers.NETCUP)
+        all_vms = await client.get_all_vms()
+        tasks = [asyncio.create_task(monitor_vm(vm, client)) for vm in all_vms]
+        await asyncio.gather(*tasks)
 
-            if vm.state == "STOPPED":
-                print(f"{get_display_mame(vm)} not running. Starting...")
-                logger.error(f"{get_display_mame(vm)} not running. Starting...")
-
-                client.start_vm(vm)
-            else:
-                print(f"{get_display_mame(vm)} -> {vm.state}")
-                logger.debug(f"{get_display_mame(vm)} -> {vm.state}")
-    except ClientException as ce:
+    except iaas_ex.ClientException as ce:
         print(ce.message)
         logger.error(ce.message)
-    except ProviderError as pe:
+    except iaas_ex.ProviderError as pe:
         print(pe.message)
         logger.error(pe.message)
 
 
 if __name__ == '__main__':
     configure_logging()
-    main()
+    asyncio.run(main())
