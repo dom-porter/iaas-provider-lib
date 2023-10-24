@@ -31,10 +31,15 @@ def soap_message_factory(end_point: str, variables: dict[str, str]) -> xml.etree
     :return: xml.etree.ElementTree.Element
     """
 
-    envelope = et.Element(tag="soapenv:Envelope", attrib=ENVELOPE_ATTRIBUTES)
-    header = et.SubElement(envelope, tag='soapenv:Header')
-    body = et.SubElement(envelope, tag='soapenv:Body')
-    api_end_point = et.SubElement(body, tag=f"end:{end_point}")
+    """
+    Unusual behaviour if tag= is used in call et.Element
+    eg: et.Element(tag="soapenv:Envelope", attrib=ENVELOPE_ATTRIBUTES)
+    Removed for now.
+    """
+    envelope = et.Element("soapenv:Envelope", ENVELOPE_ATTRIBUTES)
+    header = et.SubElement(envelope, 'soapenv:Header')
+    body = et.SubElement(envelope, 'soapenv:Body')
+    api_end_point = et.SubElement(body, f"end:{end_point}")
 
     for field, data in variables.items():
         api_var = et.SubElement(api_end_point, field)
