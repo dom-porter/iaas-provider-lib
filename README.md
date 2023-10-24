@@ -12,7 +12,7 @@ from iaas.exceptions import ClientException, ProviderError
 from iaas.client import client_factory, Providers
 
 client = client_factory(Providers.NETCUP)
-vm_list = client.get_all_vms()
+vm_list = await client.get_all_vms()
 
 for vm in vm_list:
     print(vm.vm_id)
